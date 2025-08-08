@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aesthetic Dice - Always One</title>
+<style>
+/* All your styles from before remain unchanged */
+</style>
+</head>
+<body>
+<!-- Animated Background -->
+<div class="dice-background" id="diceBackground"></div>
+
+<!-- Interface 1: Initial Roll -->
+<div class="interface active" id="interface1">
+    <div class="main-container">
+        <h1 class="title">🎲 Aesthetic Dice 🎲</h1>
+        <p class="subtitle">Ready to test your luck?</p>
+        <div class="dice-display">🎲</div>
+        <button class="dice-btn" onclick="startRoll()">Click Here to Roll the Dice</button>
+        <div class="roll-counter">Rolls: <span id="rollCount">0</span></div>
+    </div>
+</div>
+
+<!-- Interface 2: Rolling Animation -->
+<div class="interface" id="interface2">
+    <div class="main-container">
+        <h1 class="title">🎲 Rolling... 🎲</h1>
+        <div class="dice-display rolling-dice" id="rollingDice">🎲</div>
+        <div class="message rolling-message">
+            The dice is spinning
+            <span class="loading-dots">
+                <span></span><span></span><span></span>
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- Interface 3: Result Display -->
+<div class="interface" id="interface3">
+    <div class="main-container">
+        <h1 class="title">Result!</h1>
+        <div class="dice-display">⚀</div>
+        <div class="message result-message" id="resultMessage">It's a 1!</div>
+        <button class="dice-btn" onclick="rollAgain()">Roll Again</button>
+        <button class="dice-btn" onclick="resetGame()">New Game</button>
+        <div class="roll-counter">Rolls: <span id="resultCount">0</span></div>
+    </div>
+</div>
+
+<!-- Interface 4: Revelation -->
+<div class="interface" id="interface4">
+    <div class="main-container">
+        <h1 class="title">🎉 Plot Twist! 🎉</h1>
+        <div class="dice-display">⚀</div>
+        <div class="message kidding-message">Just Kidding!</div>
+        <div class="reveal-text">It's ALWAYS going to be 1! 😄</div>
+        <div class="reveal-text">This dice is rigged, my friend!</div>
+        <button class="dice-btn" onclick="continueGame()">Keep Playing Anyway</button>
+        <button class="dice-btn" onclick="resetGame()">Start Over</button>
+        <div class="roll-counter">Total Rolls: <span id="finalCount">3</span></div>
+    </div>
+</div>
+
+<script>
+let rollCount = 0;
+let currentInterface = 1;
+
+function createFloatingDice() {
+    const background = document.getElementById('diceBackground');
+    const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+    
+    for (let i = 0; i < 20; i++) {
+        const dice = document.createElement('div');
+        dice.className = 'floating-dice';
+        dice.textContent = diceSymbols[Math.floor(Math.random() * diceSymbols.length)];
+        dice.style.left = Math.random() * 100 + '%';
+        dice.style.top = Math.random() * 100 + '%';
+        dice.style.animationDelay = Math.random() * 6 + 's';
+        dice.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+        background.appendChild(dice);
+    }
+}
+
+function switchInterface(from, to) {
+    const fromInterface = document.getElementById(`interface${from}`);
+    const toInterface = document.getElementById(`interface${to}`);
+    
+    fromInterface.classList.add('slide-out');
+    
+    setTimeout(() => {
+        fromInterface.classList.remove('active', 'slide-out');
+        toInterface.classList.add('active');
+        currentInterface = to;
+    }, 400);
+}
+
+function startRoll() {
+    rollCount++;
+    updateCounters();
+    switchInterface(1, 2);
+
+    const rollingDice = document.getElementById('rollingDice');
+    const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+    let rollAnimation = 0;
+    const totalFrames = 30;
+    
+    const rollInterval = setInterval(() => {
+        rollingDice.textContent = diceFaces[Math.floor(Math.random() * 6)];
+        rollAnimation++;
+        if (rollAnimation >= totalFrames) {
+            clearInterval(rollInterval);
+            rollingDice.textContent = '⚀';
+            showResult();
+        }
+    }, 80);
+}
+
+function showResult() {
+    setTimeout(() => {
+        if (rollCount < 3) {
+            switchInterface(2, 3);
+            document.getElementById('resultMessage').textContent = "It's a 1! What are the odds?";
+        } else if (rollCount === 3) {
+            switchInterface(2, 4);
+            createParticles();
+        } else {
+            switchInterface(2, 3);
+            document.getElementById('resultMessage').textContent = 'Another 1! You know the drill! 😏';
+        }
+    }, 500);
+}
+
+function rollAgain() {
+    switchInterface(3, 1);
+}
+
+function continueGame() {
+    switchInterface(4, 1);
+}
+
+function resetGame() {
+    rollCount = 0;
+    updateCounters();
+    document.querySelectorAll('.interface').forEach(i => i.classList.remove('active'));
+    document.getElementById('interface1').classList.add('active');
+    currentInterface = 1;
+    document.querySelectorAll('.particle').forEach(particle => particle.remove());
+}
+
+function updateCounters() {
+    document.getElementById('rollCount').textContent = rollCount;
+    document.getElementById('resultCount').textContent = rollCount;
+    document.getElementById('finalCount').textContent = rollCount;
+}
+
+function createParticles() {
+    const colors = ['#e74c3c', '#f39c12', '#f1c40f', '#e67e22', '#d35400'];
+    for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.animationDelay = Math.random() * 2 + 's';
+            particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.body.appendChild(particle);
+            setTimeout(() => particle.remove(), 4000);
+        }, i * 100);
+    }
+}
+
+document.addEventListener('keydown', function(event) {
+    if (event.code === 'Space' && currentInterface === 1) {
+        event.preventDefault();
+        startRoll();
+    }
+});
+
+createFloatingDice();
+
+document.querySelectorAll('.dice-display').forEach(dice => {
+    dice.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05) rotateY(15deg)';
+    });
+    dice.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1) rotateY(0deg)';
+    });
+});
+</script>
+</body>
+</html>

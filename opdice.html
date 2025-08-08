@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rigged Dice 🎲</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #3b3b5c);
+    color: white;
+    text-align: center;
+    overflow: hidden;
+}
+
+.interface {
+    display: none;
+    padding: 50px;
+}
+
+.interface.active {
+    display: block;
+}
+
+button {
+    background: #ff9800;
+    border: none;
+    padding: 12px 24px;
+    color: white;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 10px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #e68900;
+}
+
+.dice-display {
+    font-size: 100px;
+    margin: 20px 0;
+}
+
+.rolling {
+    animation: roll 0.2s infinite;
+}
+
+@keyframes roll {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(20deg); }
+    50% { transform: rotate(-20deg); }
+    75% { transform: rotate(15deg); }
+    100% { transform: rotate(0deg); }
+}
+</style>
+</head>
+<body>
+
+<!-- Interface 1: Start Screen -->
+<div class="interface active" id="interface1">
+    <h1>🎲 Rigged Dice 🎲</h1>
+    <p>Click to roll the dice!</p>
+    <button onclick="startRoll()">Roll Dice</button>
+    <p>Rolls: <span id="rollCount">0</span></p>
+</div>
+
+<!-- Interface 2: Rolling Animation -->
+<div class="interface" id="interface2">
+    <h1>Rolling...</h1>
+    <div class="dice-display rolling" id="rollingDice">🎲</div>
+</div>
+
+<!-- Interface 3: Result -->
+<div class="interface" id="interface3">
+    <h1>Result</h1>
+    <div class="dice-display">⚀</div>
+    <p id="resultMessage">It's a 1! What a coincidence!</p>
+    <button onclick="rollAgain()">Roll Again</button>
+</div>
+
+<!-- Interface 4: Just Kidding -->
+<div class="interface" id="interface4">
+    <h1>🎉 Just Kidding! 🎉</h1>
+    <div class="dice-display">⚀</div>
+    <p>It's ALWAYS going to be 1 😄</p>
+    <button onclick="rollAgain()">Keep Playing</button>
+</div>
+
+<script>
+let rollCount = 0;
+
+function showInterface(num) {
+    document.querySelectorAll('.interface').forEach(div => div.classList.remove('active'));
+    document.getElementById(`interface${num}`).classList.add('active');
+}
+
+function startRoll() {
+    rollCount++;
+    document.getElementById("rollCount").textContent = rollCount;
+    showInterface(2);
+
+    let diceFaces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+    let rollingDice = document.getElementById("rollingDice");
+    let count = 0;
+    let interval = setInterval(() => {
+        rollingDice.textContent = diceFaces[Math.floor(Math.random() * 6)];
+        count++;
+        if (count > 10) {
+            clearInterval(interval);
+            showResult();
+        }
+    }, 100);
+}
+
+function showResult() {
+    if (rollCount === 3) {
+        showInterface(4);
+    } else {
+        showInterface(3);
+        document.getElementById("resultMessage").textContent = "It's a 1! What a coincidence!";
+    }
+}
+
+function rollAgain() {
+    showInterface(1);
+}
+</script>
+
+</body>
+</html>
