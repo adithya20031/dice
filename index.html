@@ -1,0 +1,16 @@
+def roll_dice():
+   return 1
+def main():
+    print("dice roller ")
+    while True:
+        input("press enter to roll the dice")
+
+        if input().strip().lower() == 'exit':
+            print("goodbye! thanks for playing.")
+            break
+
+            result = roll_dice()
+            print(f"you rolled a  {result}\n")
+
+            if __name__ == "__main__":
+                main()
